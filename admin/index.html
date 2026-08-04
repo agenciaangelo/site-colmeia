@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel • Colmeia Chalés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mel:#E8901A;--mel-claro:#F6B23E;--mel-escuro:#BE710C;--apoio:#2B0F0A;--apoio-3:#1E0906;
+  --turquesa:#2E8C93;--areia:#FBF5EA;--areia-2:#F1E7D5;--branco:#fff;--texto:#3A2C22;--texto-suave:#6E5E50;
+  --ok:#2E8C93;--erro:#c0392b;--raio:14px;--sombra:0 14px 40px -22px rgba(43,15,10,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Barlow Semi Condensed",system-ui,sans-serif;background:var(--areia);color:var(--texto);font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Fraunces",serif;color:var(--apoio);line-height:1.1}
+.logomark{width:34px;height:40px;color:#fff}.logomark .sym{fill:currentColor}
+button{font-family:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;font-weight:700;font-size:.95rem;
+  padding:.6em 1.2em;border-radius:100px;border:none;transition:transform .15s,background .15s;letter-spacing:.02em}
+.btn:active{transform:scale(.98)}
+.btn-mel{background:var(--mel);color:#fff}.btn-mel:hover{background:var(--mel-escuro)}
+.btn-out{background:transparent;border:1.5px solid rgba(43,15,10,.2);color:var(--apoio)}
+.btn-out:hover{border-color:var(--mel);color:var(--mel-escuro)}
+.btn-del{background:transparent;border:1.5px solid rgba(192,57,43,.35);color:var(--erro)}
+.btn-del:hover{background:rgba(192,57,43,.08)}
+.btn-sm{padding:.45em .9em;font-size:.85rem}
+input,select,textarea{font-family:inherit;font-size:.98rem;color:var(--apoio);padding:.6em .75em;border:1.5px solid var(--areia-2);
+  border-radius:10px;background:#fff;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--mel)}
+textarea{min-height:70px;resize:vertical}
+label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--texto-suave);display:block;margin-bottom:5px}
+
+/* LOGIN */
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:linear-gradient(160deg,var(--apoio) 0%,var(--apoio-3) 100%)}
+.login-card{background:#fff;border-radius:20px;box-shadow:var(--sombra);padding:40px 36px;width:min(400px,100%);text-align:center}
+.login-card .logomark{color:var(--mel);width:52px;height:60px;margin:0 auto 14px}
+.login-card h1{font-size:1.6rem}.login-card p{color:var(--texto-suave);margin:6px 0 24px;font-size:.95rem}
+.login-card label{text-align:left}
+.login-card .btn{width:100%;margin-top:18px;padding:.8em}
+.login-err{color:var(--erro);font-size:.9rem;margin-top:12px;min-height:1.2em}
+
+/* APP */
+.app{display:none;min-height:100vh}
+.topbar{background:var(--apoio);color:#fff;padding:12px 0;position:sticky;top:0;z-index:10}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between}
+.topbar .brand{display:flex;align-items:center;gap:10px}
+.topbar .brand b{font-family:"Fraunces",serif;font-weight:600;font-size:1.15rem}
+.topbar .brand span{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);display:block}
+.tabs{display:flex;gap:8px;margin:28px 0 22px}
+.tab{padding:.6em 1.3em;border-radius:100px;background:#fff;border:1.5px solid var(--areia-2);font-weight:700;color:var(--texto-suave)}
+.tab.active{background:var(--mel);color:#fff;border-color:var(--mel)}
+.panel{display:none}.panel.active{display:block}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.panel-head h2{font-size:1.5rem}
+.card{background:#fff;border:1px solid rgba(43,15,10,.07);border-radius:var(--raio);padding:22px 24px;margin-bottom:18px;box-shadow:0 6px 22px -16px rgba(43,15,10,.4)}
+.card.off{opacity:.62}
+.card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.card-h h3{font-size:1.2rem}
+.card-h .idtag{font-size:.7rem;color:var(--texto-suave);background:var(--areia-2);padding:.2em .6em;border-radius:6px;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid .full{grid-column:1/-1}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.checks{display:flex;flex-wrap:wrap;gap:8px 16px}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;font-weight:600;color:var(--texto);text-transform:none;letter-spacing:0;margin:0}
+.chk input{width:auto}
+.sw{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--apoio);font-size:.9rem}
+.sw input{width:auto;transform:scale(1.25)}
+.card-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.hint{font-size:.82rem;color:var(--texto-suave);margin-top:4px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(120%);background:var(--apoio);color:#fff;
+  padding:.8em 1.4em;border-radius:100px;font-weight:700;box-shadow:var(--sombra);transition:transform .3s;z-index:50;max-width:90vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--erro)}.toast.ok{background:var(--ok)}
+.loading{text-align:center;color:var(--texto-suave);padding:40px}
+.cfgwarn{background:#fff3cd;border:1px solid #ffe08a;color:#8a6d00;padding:12px 16px;border-radius:10px;margin:16px 0;font-size:.9rem}
+@media(max-width:640px){.grid,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><symbol id="logo-sym" viewBox="0 0 40 44"><path class="sym" d="M20 5 L26.6 16.5 L13.4 16.5 Z"/><rect class="sym" x="12.4" y="19.6" width="15.2" height="4.4" rx="2.2"/><path class="sym" d="M13.4 27.5 L26.6 27.5 L20 39 Z"/></symbol></svg>
+
+<!-- LOGIN -->
+<div class="login" id="login">
+  <div class="login-card">
+    <svg class="logomark"><use href="#logo-sym"/></svg>
+    <h1>Painel Colmeia</h1>
+    <p>Acesso restrito à administração</p>
+    <div id="cfgWarn"></div>
+    <label for="pw">Senha de administrador</label>
+    <input type="password" id="pw" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn btn-mel" id="btnLogin">Entrar</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <div class="topbar"><div class="wrap">
+    <div class="brand"><svg class="logomark"><use href="#logo-sym"/></svg><div><b>Colmeia Chalés</b><span>Painel administrativo</span></div></div>
+    <button class="btn btn-out btn-sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.3)">Sair</button>
+  </div></div>
+
+  <div class="wrap">
+    <div class="tabs">
+      <button class="tab active" data-tab="acom">Acomodações</button>
+      <button class="tab" data-tab="ofertas">Ofertas</button>
+    </div>
+
+    <div class="panel active" id="panel-acom">
+      <div class="panel-head"><h2>Acomodações</h2><button class="btn btn-mel" id="addAcom">+ Adicionar acomodação</button></div>
+      <div id="listAcom"><div class="loading">Carregando…</div></div>
+    </div>
+
+    <div class="panel" id="panel-ofertas">
+      <div class="panel-head"><h2>Ofertas</h2><button class="btn btn-mel" id="addOferta">+ Nova oferta</button></div>
+      <p class="hint" style="margin-bottom:16px">Ofertas ativas aparecem no site e são aplicadas automaticamente quando as datas da reserva caem no período.</p>
+      <div id="listOfertas"><div class="loading">Carregando…</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== CONFIG ===================== */
+const API_URL = "https://script.google.com/macros/s/AKfycbxF3kbLbhSVZKZV_3myzWIvdxsAiLYqefboOopYmStQIimDMmloX2P8KO4QD0MTiu6O/exec"; /* mesma Web App URL usada no site (termina em /exec) */
+
+/* ===================== ESTADO ===================== */
+const AMEN = [
+  ["ar","Ar-condicionado"],["cozinha","Cozinha"],["varanda","Varanda"],["wifi","Wi-Fi"],["tv","TV"],
+  ["banheira","Hidromassagem"],["mar","Vista para o mar"],["cama","Cama de casal"],["sofa","Sofá-cama"],["estac","Estacionamento"]
+];
+let TOKEN = sessionStorage.getItem("cc_token") || "";
+let ACOM = [], OFERTAS = [];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/"/g,"&quot;").replace(/</g,"&lt;");
+
+function toast(msg,type){ const t=$("toast"); t.textContent=msg; t.className="toast show "+(type||""); setTimeout(()=>t.className="toast",2600); }
+function configOk(){ return /^https?:\/\//.test(API_URL); }
+
+/* ===================== API ===================== */
+async function apiGet(){ const r=await fetch(API_URL,{method:"GET"}); return r.json(); }
+async function apiPost(action,payload){
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({token:TOKEN,action,payload})});
+  return r.json();
+}
+
+/* ===================== LOGIN ===================== */
+if(!configOk()){ $("cfgWarn").innerHTML='<div class="cfgwarn">⚙️ Configure a constante <b>API_URL</b> no topo do código com a URL da sua Web App do Apps Script.</div>'; }
+$("btnLogin").addEventListener("click", entrar);
+$("pw").addEventListener("keydown", e=>{ if(e.key==="Enter") entrar(); });
+async function entrar(){
+  const pw=$("pw").value.trim();
+  if(!pw){ $("loginErr").textContent="Digite a senha."; return; }
+  if(!configOk()){ $("loginErr").textContent="Configure a API_URL antes de entrar."; return; }
+  $("loginErr").textContent="Verificando…";
+  TOKEN=pw;
+  const res=await apiPost("auth",{}).catch(()=>({ok:false,error:"Falha de conexão"}));
+  if(res && res.ok){ sessionStorage.setItem("cc_token",TOKEN); abrirApp(); }
+  else { $("loginErr").textContent = (res&&res.error)? res.error : "Senha incorreta."; sessionStorage.removeItem("cc_token"); }
+}
+$("btnLogout").addEventListener("click", ()=>{ sessionStorage.removeItem("cc_token"); location.reload(); });
+
+function abrirApp(){ $("login").style.display="none"; $("app").style.display="block"; carregar(); }
+
+/* Tabs */
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active"); $("panel-"+t.dataset.tab).classList.add("active");
+}));
+
+/* ===================== CARREGAR ===================== */
+async function carregar(){
+  try{
+    const d=await apiGet();
+    ACOM=(d.acomodacoes||[]).slice().sort((a,b)=>(Number(a.ordem)||0)-(Number(b.ordem)||0));
+    OFERTAS=d.ofertas||[];
+    renderAcom(); renderOfertas();
+  }catch(e){ $("listAcom").innerHTML='<div class="loading">Erro ao carregar dados. Verifique a API_URL.</div>'; }
+}
+
+/* ===================== ACOMODAÇÕES ===================== */
+function acomChecks(sel){ return AMEN.map(([k,l])=>`<label class="chk"><input type="checkbox" value="${k}" ${sel.includes(k)?"checked":""}> ${l}</label>`).join(""); }
+function renderAcom(){
+  const box=$("listAcom"); box.innerHTML="";
+  if(!ACOM.length){ box.innerHTML='<div class="loading">Nenhuma acomodação. Clique em “Adicionar acomodação”.</div>'; return; }
+  ACOM.forEach(a=>box.appendChild(cardAcom(a)));
+}
+function cardAcom(a){
+  const sel=(a.comodidades?String(a.comodidades).split(",").map(s=>s.trim()):[]);
+  const ativo=!(a.ativo===false||a.ativo==="FALSE"||a.ativo==="false");
+  const el=document.createElement("div"); el.className="card"+(ativo?"":" off"); el.dataset.id=a.id;
+  el.innerHTML=`
+    <div class="card-h"><h3>${esc(a.nome)||"(sem nome)"}</h3><span class="idtag">id: ${esc(a.id)}</span></div>
+    <div class="grid">
+      <div class="full"><label>Nome</label><input data-f="nome" value="${esc(a.nome)}"></div>
+      <div><label>Preço / diária (R$)</label><input data-f="preco" type="number" min="0" value="${esc(a.preco)}"></div>
+      <div><label>Capacidade (hóspedes)</label><input data-f="capacidade" type="number" min="1" value="${esc(a.capacidade)}"></div>
+      <div><label>Ordem de exibição</label><input data-f="ordem" type="number" min="0" value="${esc(a.ordem)}"></div>
+      <div><label>Destaque (selo)</label><input data-f="badge" placeholder="ex.: Mais desejado" value="${esc(a.badge)}"></div>
+      <div class="full"><label>Descrição</label><textarea data-f="descricao">${esc(a.descricao)}</textarea></div>
+      <div class="full"><label>Comodidades</label><div class="checks" data-amen>${acomChecks(sel)}</div></div>
+      <div class="full"><label>Foto (URL — opcional)</label><input data-f="foto" placeholder="Deixe vazio para usar a foto padrão do site" value="${esc(a.foto)}">
+        <p class="hint">As fotos padrão dos 5 chalés já vêm embutidas no site (por id). Use este campo para novas acomodações ou para trocar a foto por uma URL.</p></div>
+      <div class="full"><label class="sw"><input type="checkbox" data-f="ativo" ${ativo?"checked":""}> Ativo (aparece no site)</label></div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-mel btn-sm" data-save>Salvar</button>
+      <button class="btn btn-del btn-sm" data-del>Excluir</button>
+    </div>`;
+  el.querySelector("[data-save]").addEventListener("click",()=>salvarAcom(el,a.id));
+  el.querySelector("[data-del]").addEventListener("click",()=>excluirAcom(a.id,a.nome));
+  return el;
+}
+function lerAcom(el,id){
+  const g=f=>el.querySelector(`[data-f="${f}"]`);
+  const amen=[...el.querySelectorAll("[data-amen] input:checked")].map(i=>i.value).join(",");
+  return { id, nome:g("nome").value.trim(), preco:Number(g("preco").value)||0, capacidade:Number(g("capacidade").value)||1,
+    ordem:Number(g("ordem").value)||0, badge:g("badge").value.trim(), descricao:g("descricao").value.trim(),
+    comodidades:amen, foto:g("foto").value.trim(), ativo:g("ativo").checked };
+}
+async function salvarAcom(el,id){
+  const p=lerAcom(el,id);
+  if(!p.nome){ toast("Informe o nome.","err"); return; }
+  const btn=el.querySelector("[data-save]"); btn.textContent="Salvando…"; btn.disabled=true;
+  const res=await apiPost("saveAcomodacao",p).catch(()=>({ok:false}));
+  btn.textContent="Salvar"; btn.disabled=false;
+  if(res&&res.ok){ toast("Acomodação salva ✓","ok"); carregar(); } else { toast((res&&res.error)||"Erro ao salvar","err"); }
+}
+async function excluirAcom(id,nome){
+  if(!confirm(`Excluir a acomodação "${nome||id}"? Esta ação não pode ser desfeita.`)) return;
+  const res=await apiPost("deleteAcomodacao",{id}).catch(()=>({ok:false}));
+  if(res&&res.ok){ toast("Acomodação excluída","ok"); carregar(); } else { toast((res&&res.error)||"Erro ao excluir","err"); }
+}
+$("addAcom").addEventListener("click",()=>{
+  const nova={id:"ac_"+Date.now(),nome:"",preco:0,capacidade:2,ordem:(ACOM.length+1),badge:"",descricao:"",comodidades:"",foto:"",ativo:true};
+  ACOM.push(nova); renderAcom();
+  const el=$("listAcom").querySelector(`[data-id="${nova.id}"]`); if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
+});
+
+/* ===================== OFERTAS ===================== */
+function alvoChecks(sel){
+  const todas = (sel==="todas"||!sel);
+  const arr = todas?[]:(Array.isArray(sel)?sel:String(sel).split(",").map(s=>s.trim()));
+  let html=`<label class="chk"><input type="checkbox" data-todas ${todas?"checked":""}> <b>Todas</b></label>`;
+  html+=ACOM.map(a=>`<label class="chk"><input type="checkbox" data-alvo value="${a.id}" ${(!todas&&arr.includes(a.id))?"checked":""} ${todas?"disabled":""}> ${esc(a.nome)}</label>`).join("");
+  return html;
+}
+function renderOfertas(){
+  const box=$("listOfertas"); box.innerHTML="";
+  if(!OFERTAS.length){ box.innerHTML='<div class="loading">Nenhuma oferta cadastrada. Clique em “Nova oferta”.</div>'; return; }
+  OFERTAS.forEach(o=>box.appendChild(cardOferta(o)));
+}
+function cardOferta(o){
+  const ativo=!(o.ativo===false||o.ativo==="FALSE"||o.ativo==="false");
+  const tipo=o.tipo||"informativo";
+  const el=document.createElement("div"); el.className="card"+(ativo?"":" off"); el.dataset.id=o.id;
+  el.innerHTML=`
+    <div class="card-h"><h3>${esc(o.titulo)||"(sem título)"}</h3><span class="idtag">id: ${esc(o.id)}</span></div>
+    <div class="grid">
+      <div class="full"><label>Título</label><input data-f="titulo" placeholder="ex.: Especial Dia dos Pais" value="${esc(o.titulo)}"></div>
+      <div class="full"><label>Condições / descrição</label><textarea data-f="descricao" placeholder="ex.: 10% de desconto na diária + café da manhã">${esc(o.descricao)}</textarea></div>
+      <div><label>Início</label><input data-f="inicio" type="date" value="${esc(String(o.inicio||'').slice(0,10))}"></div>
+      <div><label>Fim</label><input data-f="fim" type="date" value="${esc(String(o.fim||'').slice(0,10))}"></div>
+      <div><label>Tipo de condição</label>
+        <select data-f="tipo">
+          <option value="percentual" ${tipo==="percentual"?"selected":""}>Desconto percentual (%)</option>
+          <option value="preco_especial" ${tipo==="preco_especial"?"selected":""}>Preço especial da diária (R$)</option>
+          <option value="informativo" ${tipo==="informativo"?"selected":""}>Somente informativo (sem alterar preço)</option>
+        </select></div>
+      <div><label data-vlabel>Valor</label><input data-f="valor" type="number" min="0" value="${esc(o.valor)}"></div>
+      <div class="full"><label>Aplica-se a</label><div class="checks" data-alvos>${alvoChecks(o.acomodacoes)}</div></div>
+      <div><label>Cor do selo (opcional)</label><input data-f="cor" type="color" value="${o.cor||'#E8901A'}" style="height:44px;padding:4px"></div>
+      <div><label class="sw" style="margin-top:26px"><input type="checkbox" data-f="ativo" ${ativo?"checked":""}> Ativa</label></div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-mel btn-sm" data-save>Salvar</button>
+      <button class="btn btn-del btn-sm" data-del>Excluir</button>
+    </div>`;
+  // dinâmica: "Todas" desabilita alvos; label do valor conforme tipo
+  const todas=el.querySelector("[data-todas]"), alvos=[...el.querySelectorAll("[data-alvo]")];
+  todas.addEventListener("change",()=>{ alvos.forEach(a=>{a.disabled=todas.checked; if(todas.checked)a.checked=false;}); });
+  const tipoSel=el.querySelector('[data-f="tipo"]'), vlabel=el.querySelector("[data-vlabel]"), vinput=el.querySelector('[data-f="valor"]');
+  function syncTipo(){ const t=tipoSel.value;
+    if(t==="percentual"){ vlabel.textContent="Desconto (%)"; vinput.disabled=false; }
+    else if(t==="preco_especial"){ vlabel.textContent="Diária especial (R$)"; vinput.disabled=false; }
+    else { vlabel.textContent="Valor (não usado)"; vinput.disabled=true; } }
+  tipoSel.addEventListener("change",syncTipo); syncTipo();
+  el.querySelector("[data-save]").addEventListener("click",()=>salvarOferta(el,o.id));
+  el.querySelector("[data-del]").addEventListener("click",()=>excluirOferta(o.id,o.titulo));
+  return el;
+}
+function lerOferta(el,id){
+  const g=f=>el.querySelector(`[data-f="${f}"]`);
+  const todas=el.querySelector("[data-todas]").checked;
+  const alvo=todas?"todas":[...el.querySelectorAll("[data-alvo]:checked")].map(i=>i.value).join(",");
+  return { id, titulo:g("titulo").value.trim(), descricao:g("descricao").value.trim(),
+    inicio:g("inicio").value, fim:g("fim").value, tipo:g("tipo").value, valor:Number(g("valor").value)||0,
+    acomodacoes:(alvo||"todas"), cor:g("cor").value, ativo:g("ativo").checked };
+}
+async function salvarOferta(el,id){
+  const p=lerOferta(el,id);
+  if(!p.titulo){ toast("Informe o título da oferta.","err"); return; }
+  if(!p.inicio||!p.fim){ toast("Informe início e fim.","err"); return; }
+  const btn=el.querySelector("[data-save]"); btn.textContent="Salvando…"; btn.disabled=true;
+  const res=await apiPost("saveOferta",p).catch(()=>({ok:false}));
+  btn.textContent="Salvar"; btn.disabled=false;
+  if(res&&res.ok){ toast("Oferta salva ✓","ok"); carregar(); } else { toast((res&&res.error)||"Erro ao salvar","err"); }
+}
+async function excluirOferta(id,titulo){
+  if(!confirm(`Excluir a oferta "${titulo||id}"?`)) return;
+  const res=await apiPost("deleteOferta",{id}).catch(()=>({ok:false}));
+  if(res&&res.ok){ toast("Oferta excluída","ok"); carregar(); } else { toast((res&&res.error)||"Erro ao excluir","err"); }
+}
+$("addOferta").addEventListener("click",()=>{
+  const nova={id:"of_"+Date.now(),titulo:"",descricao:"",inicio:"",fim:"",tipo:"percentual",valor:10,acomodacoes:"todas",cor:"#E8901A",ativo:true};
+  OFERTAS.unshift(nova); renderOfertas();
+  const el=$("listOfertas").querySelector(`[data-id="${nova.id}"]`); if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
+});
+
+/* ===================== INIT ===================== */
+if(TOKEN && configOk()){ abrirApp(); }
+</script>
+</body>
+</html>
