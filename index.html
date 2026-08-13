@@ -53,6 +53,8 @@ header.nav.scrolled{background:rgba(43,15,10,.97);backdrop-filter:blur(10px);box
 .nav-links a.link::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--mel-claro);transition:width .25s ease}
 .nav-links a.link:hover::after{width:100%}
 .nav-cta{margin-left:4px}
+.nav-badge{display:block;height:50px;aspect-ratio:724/625;background:var(--logo) center/contain no-repeat;transition:height .3s ease}
+header.nav.scrolled .nav-badge{height:42px}
 .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;z-index:110}
 .burger span{display:block;width:26px;height:2.5px;background:#fff;margin:5px 0;border-radius:2px;transition:.3s}
 .hero{position:relative;min-height:100svh;display:flex;align-items:center;color:#fff;text-align:center;padding:150px 0 70px;background:var(--apoio);overflow:hidden}
@@ -162,7 +164,7 @@ section{padding:92px 0;position:relative}
 footer{background:var(--apoio-3);color:rgba(255,255,255,.78);padding:60px 0 0}
 .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:44px;padding-bottom:44px}
 .foot-brand .brand-txt b{color:#fff}
-.foot-badge{width:170px;aspect-ratio:724/625;background:var(--logo) center/contain no-repeat;margin-bottom:4px}
+.foot-badge{width:140px;aspect-ratio:724/625;background:var(--logo) center/contain no-repeat;margin-bottom:4px}
 .foot-brand p{margin-top:16px;font-size:.98rem;max-width:340px;color:rgba(255,255,255,.6)}
 .foot-col h4{color:#fff;font-family:"Barlow Semi Condensed",sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px}
 .foot-col a,.foot-col p{display:block;color:rgba(255,255,255,.7);font-size:.98rem;margin-bottom:11px}
@@ -256,8 +258,7 @@ body.co-open .wpp-float{display:none}
 <header class="nav" id="nav">
   <div class="container nav-inner">
     <a href="#topo" class="brand" aria-label="Colmeia Chalés — início">
-      <span class="logomark"></span>
-      <span class="brand-txt"><b>Colmeia Chalés</b><span>Praia de Camurupim · RN</span></span>
+      <span class="nav-badge" role="img" aria-label="Colmeia Chalés"></span>
     </a>
     <nav class="nav-links" id="navLinks">
       <a class="link" href="#sobre">Sobre</a>
@@ -274,7 +275,6 @@ body.co-open .wpp-float{display:none}
 <section class="hero" id="topo">
   <div class="hero-bg" data-img="p83" data-slot="hero"></div>
   <div class="container">
-    <div class="hero-badge" role="img" aria-label="Colmeia Chalés"></div>
     <h1>Seu refúgio <em>à beira-mar</em>,<br>a 30 km de Natal</h1>
     <p class="sub">Chalés de frente para o mar na Praia de Camurupim, em meio a uma área arborizada com piscina, tranquilidade e vista paradisíaca.</p>
     <div class="booking" role="form" aria-label="Iniciar reserva">
