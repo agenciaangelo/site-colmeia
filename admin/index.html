@@ -78,6 +78,8 @@ label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:upper
 .toast.err{background:var(--erro)}.toast.ok{background:var(--ok)}
 .loading{text-align:center;color:var(--texto-suave);padding:40px}
 .cfgwarn{background:#fff3cd;border:1px solid #ffe08a;color:#8a6d00;padding:12px 16px;border-radius:10px;margin:16px 0;font-size:.9rem}
+.grp{font-size:1rem;color:var(--mel-escuro);margin:26px 0 10px;letter-spacing:.02em;border-bottom:1px solid var(--areia-2);padding-bottom:8px}
+.slot .foto-prev.show{height:150px}
 @media(max-width:640px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -107,6 +109,7 @@ label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:upper
     <div class="tabs">
       <button class="tab active" data-tab="acom">Acomodações</button>
       <button class="tab" data-tab="ofertas">Ofertas</button>
+      <button class="tab" data-tab="imagens">Imagens do site</button>
     </div>
     <div class="panel active" id="panel-acom">
       <div class="panel-head"><h2>Acomodações</h2><button class="btn btn-mel" id="addAcom">+ Adicionar acomodação</button></div>
@@ -116,6 +119,11 @@ label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:upper
       <div class="panel-head"><h2>Ofertas</h2><button class="btn btn-mel" id="addOferta">+ Nova oferta</button></div>
       <p class="hint" style="margin-bottom:16px">Ofertas ativas aparecem no site e são aplicadas automaticamente quando as datas da reserva caem no período.</p>
       <div id="listOfertas"><div class="loading">Carregando…</div></div>
+    </div>
+    <div class="panel" id="panel-imagens">
+      <div class="panel-head"><h2>Imagens do site</h2></div>
+      <p class="hint" style="margin-bottom:16px">Troque as fotos das seções do site. Cada campo mostra o tamanho ideal. Deixe em branco (ou use “Voltar ao padrão”) para usar a foto original.</p>
+      <div id="listImagens"><div class="loading">Carregando…</div></div>
     </div>
   </div>
 </div>
@@ -173,7 +181,8 @@ async function carregar(){
     const d=await apiGet();
     ACOM=(d.acomodacoes||[]).slice().sort((a,b)=>(Number(a.ordem)||0)-(Number(b.ordem)||0));
     OFERTAS=d.ofertas||[];
-    renderAcom(); renderOfertas();
+    IMAGENS={}; (d.imagens||[]).forEach(it=>{ if(it&&it.chave) IMAGENS[it.chave]=it.url||""; });
+    renderAcom(); renderOfertas(); renderImagens();
   }catch(e){ $("listAcom").innerHTML='<div class="loading">Erro ao carregar dados. Verifique a API_URL.</div>'; }
 }
 
@@ -356,6 +365,69 @@ $("addOferta").addEventListener("click",()=>{
   OFERTAS.unshift(nova); renderOfertas();
   const el=$("listOfertas").querySelector(`[data-id="${nova.id}"]`); if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
 });
+
+/* ===================== IMAGENS DO SITE ===================== */
+const SLOTS=[
+  {chave:"hero",       grupo:"Topo do site",   label:"Foto principal (topo)",       rec:"Paisagem • ~1600 × 1000 px (mín. 1400 px de largura)", max:1600},
+  {chave:"sobre",      grupo:"Seção \u201cSobre\u201d", label:"Foto do hexágono",  rec:"Quadrada • ~900 × 900 px (recorte hexagonal: assunto no centro)", max:1100},
+  {chave:"exp_dayuse", grupo:"Experiências",   label:"Day Use",                     rec:"Paisagem • ~1000 × 700 px (3:2)", max:1200},
+  {chave:"exp_evento", grupo:"Experiências",   label:"Casamentos e eventos",        rec:"Paisagem • ~1000 × 700 px (3:2)", max:1200},
+  {chave:"exp_espaco", grupo:"Experiências",   label:"Salão de jogos / Espaço",     rec:"Paisagem • ~1000 × 640 px", max:1200},
+  {chave:"gal1", grupo:"Galeria", label:"Galeria 1 (destaque — maior)", rec:"Retrato • ~1000 × 1250 px (ocupa 2 linhas)", max:1300},
+  {chave:"gal2", grupo:"Galeria", label:"Galeria 2", rec:"~1000 × 750 px (4:3)", max:1200},
+  {chave:"gal3", grupo:"Galeria", label:"Galeria 3", rec:"~1000 × 750 px (4:3)", max:1200},
+  {chave:"gal4", grupo:"Galeria", label:"Galeria 4", rec:"~1000 × 750 px (4:3)", max:1200},
+  {chave:"gal5", grupo:"Galeria", label:"Galeria 5", rec:"~1000 × 750 px (4:3)", max:1200},
+  {chave:"gal6", grupo:"Galeria", label:"Galeria 6", rec:"~1000 × 750 px (4:3)", max:1200},
+  {chave:"gal7", grupo:"Galeria", label:"Galeria 7", rec:"~1000 × 750 px (4:3)", max:1200},
+  {chave:"gal8", grupo:"Galeria", label:"Galeria 8", rec:"~1000 × 750 px (4:3)", max:1200},
+  {chave:"gal9", grupo:"Galeria", label:"Galeria 9", rec:"~1000 × 750 px (4:3)", max:1200}
+];
+let IMAGENS={};
+function renderImagens(){
+  const box=$("listImagens"); box.innerHTML=""; let grupo=null;
+  SLOTS.forEach(sl=>{
+    if(sl.grupo!==grupo){ grupo=sl.grupo; const h=document.createElement("h3"); h.className="grp"; h.textContent=grupo; box.appendChild(h); }
+    box.appendChild(cardSlot(sl));
+  });
+}
+function cardSlot(sl){
+  const url=IMAGENS[sl.chave]||"";
+  const el=document.createElement("div"); el.className="card slot"; el.dataset.chave=sl.chave;
+  el.innerHTML=`
+    <div class="card-h"><div><h3 style="font-size:1.1rem">${sl.label}</h3><p class="hint" style="margin-top:3px">📐 ${sl.rec}</p></div><span class="idtag">${sl.chave}</span></div>
+    <div class="foto-prev" data-prev${url?` style="background-image:url('${esc(url)}')"`:""}></div>
+    <div class="foto-row" style="margin-top:12px">
+      <input data-url placeholder="Envie uma imagem ou cole uma URL" value="${esc(url)}">
+      <label class="btn btn-out btn-sm foto-btn">📷 Enviar imagem<input type="file" accept="image/*" data-upl hidden></label>
+    </div>
+    <div class="card-actions"><button class="btn btn-mel btn-sm" data-save>Salvar</button>${url?'<button class="btn btn-del btn-sm" data-clear>Voltar ao padrão</button>':''}</div>`;
+  if(url) el.querySelector("[data-prev]").classList.add("show");
+  el.querySelector("[data-upl]").addEventListener("change",e=>{ if(e.target.files[0]) enviarSlot(el,sl,e.target.files[0]); });
+  el.querySelector("[data-save]").addEventListener("click",()=>salvarImagem(el,sl.chave));
+  const clr=el.querySelector("[data-clear]"); if(clr) clr.addEventListener("click",()=>{ el.querySelector("[data-url]").value=""; salvarImagem(el,sl.chave); });
+  return el;
+}
+async function enviarSlot(el, sl, file){
+  const btn=el.querySelector(".foto-btn"), prev=el.querySelector("[data-prev]");
+  try{
+    toast("Otimizando imagem…");
+    const dataUrl=await resizeImg(file, sl.max||1200, 0.74);
+    prev.style.backgroundImage=`url("${dataUrl}")`; prev.classList.add("show");
+    btn.classList.add("busy"); toast("Enviando imagem…");
+    const res=await apiPost("uploadFoto",{id:sl.chave, base64:dataUrl.split(",")[1], mime:"image/jpeg"}).catch(()=>({ok:false}));
+    btn.classList.remove("busy");
+    if(res&&res.ok&&res.url){ el.querySelector("[data-url]").value=res.url; toast("Imagem enviada ✓ Agora clique em Salvar","ok"); }
+    else toast((res&&res.error)||"Falha no envio","err");
+  }catch(e){ btn.classList.remove("busy"); toast("Erro ao processar a imagem","err"); }
+}
+async function salvarImagem(el, chave){
+  const url=el.querySelector("[data-url]").value.trim();
+  const btn=el.querySelector("[data-save]"); btn.textContent="Salvando…"; btn.disabled=true;
+  const res=await apiPost("saveImagem",{chave,url}).catch(()=>({ok:false}));
+  btn.textContent="Salvar"; btn.disabled=false;
+  if(res&&res.ok){ toast(url?"Imagem salva ✓":"Voltou ao padrão ✓","ok"); carregar(); } else toast((res&&res.error)||"Erro ao salvar","err");
+}
 
 if(TOKEN && configOk()){ abrirApp(); }
 </script>
